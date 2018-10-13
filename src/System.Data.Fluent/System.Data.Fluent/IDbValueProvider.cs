@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent
 {
-    public interface IDataAccessProvider
+    public interface IDbValueProvider
     {
-        string Name { get; }
+        object ConvertDbValue(object value, Type type)
     }
 }

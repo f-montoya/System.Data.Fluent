@@ -10,8 +10,8 @@ namespace System.Data.Fluent.Abstraction
     {
         ICommandBuilder WithSql(string sql);
 
-        ICommandBuilder WithProcedure(string sql);
+        ICommandBuilder WithProcedure(string procedure);
 
-        IFunctionBuilder WithFunction(string sql);
+        IFunctionBuilder WithFunction(string function);
     }
 }

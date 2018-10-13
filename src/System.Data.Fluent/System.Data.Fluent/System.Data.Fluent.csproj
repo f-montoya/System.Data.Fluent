@@ -45,10 +45,16 @@
     <Compile Include="Abstraction\IConfigurationBuilder.cs" />
     <Compile Include="Abstraction\IFunctionBuilder.cs" />
     <Compile Include="Abstraction\IParameterBuilder.cs" />
-    <Compile Include="DataAccess.cs" />
+    <Compile Include="Db.cs" />
     <Compile Include="Abstraction\IConnectionBuilder.cs" />
-    <Compile Include="IDataAccessProvider.cs" />
+    <Compile Include="Extensions\Check.cs" />
+    <Compile Include="IDbEngineProvider.cs" />
     <Compile Include="Impl\CommandBuilder.cs" />
+    <Compile Include="Impl\ConfigurationBuilder.cs" />
+    <Compile Include="Impl\ConnectionBuilder.cs" />
+    <Compile Include="Impl\DefaultDbValueProvider.cs" />
+    <Compile Include="Impl\Providers.cs" />
+    <Compile Include="IDbValueProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
