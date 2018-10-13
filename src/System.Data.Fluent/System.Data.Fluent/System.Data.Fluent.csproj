@@ -52,6 +52,7 @@
     <Compile Include="Impl\CommandBuilder.cs" />
     <Compile Include="Impl\ConfigurationBuilder.cs" />
     <Compile Include="Impl\ConnectionBuilder.cs" />
+    <Compile Include="Impl\Context.cs" />
     <Compile Include="Impl\DefaultDbValueProvider.cs" />
     <Compile Include="Impl\Providers.cs" />
     <Compile Include="IDbValueProvider.cs" />

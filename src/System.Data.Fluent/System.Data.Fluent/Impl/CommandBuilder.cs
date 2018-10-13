@@ -9,17 +9,13 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent.Impl
 {
-    internal class CommandBuilder : ICommandBuilder, IFunctionBuilder
+    internal sealed class CommandBuilder : ICommandBuilder, IFunctionBuilder
     {
-        ConnectionStringSettings connectionStringSettings;
-        string command;
-        CommandType commandType;
+        Context context;
 
-        public CommandBuilder(ConnectionStringSettings connectionStringSettings, string command, CommandType commandType)
+        public CommandBuilder(Context context)
         {
-            this.connectionStringSettings = connectionStringSettings;
-            this.command = command;
-            this.commandType = commandType;
+            this.context = context;
         }
 
         #region ICommandBuilder

@@ -8,6 +8,6 @@ namespace System.Data.Fluent
 {
     public interface IDbValueProvider
     {
-        object ConvertDbValue(object value, Type type)
+        object ConvertDbValue(object value, Type type);
     }
 }

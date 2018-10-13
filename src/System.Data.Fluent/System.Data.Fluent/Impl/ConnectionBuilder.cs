@@ -10,28 +10,37 @@ namespace System.Data.Fluent.Impl
 {
     internal sealed class ConnectionBuilder : IConnectionBuilder
     {
-        ConnectionStringSettings connectionStringSettings;
+        Context context;
 
-        internal ConnectionBuilder(ConnectionStringSettings connectionStringSettings)
+        internal ConnectionBuilder(Context context)
         {
-            this.connectionStringSettings = connectionStringSettings;
+            this.context = context;
         }
 
         #region IConnectionBuilder
 
         public IFunctionBuilder WithFunction(string function)
         {
-            return new CommandBuilder(connectionStringSettings, function, CommandType.StoredProcedure);
+            context.Command = function;
+            context.CommandType = CommandType.StoredProcedure;
+
+            return new CommandBuilder(context);
         }
 
         public ICommandBuilder WithProcedure(string procedure)
         {
-            return new CommandBuilder(connectionStringSettings, procedure, CommandType.StoredProcedure);
+            context.Command = procedure;
+            context.CommandType = CommandType.StoredProcedure;
+
+            return new CommandBuilder(context);
         }
 
         public ICommandBuilder WithSql(string sql)
         {
-            return new CommandBuilder(connectionStringSettings, sql, CommandType.Text);
+            context.Command = sql;
+            context.CommandType = CommandType.Text;
+
+            return new CommandBuilder(context);
         }
 
         #endregion

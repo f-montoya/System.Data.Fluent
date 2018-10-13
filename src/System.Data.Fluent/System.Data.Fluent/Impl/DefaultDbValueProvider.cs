@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent.Impl
 {
-    internal class DefaultDbValueProvider : IDbValueProvider
+    internal sealed class DefaultDbValueProvider : IDbValueProvider
     {
         public object ConvertDbValue(object value, Type type)
         {

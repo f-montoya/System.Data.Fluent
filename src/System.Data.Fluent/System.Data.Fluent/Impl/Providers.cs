@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent.Impl
 {
-    internal class Providers
+    internal sealed class Providers
     {
         public IDictionary<string, IDbEngineProvider> DbEngineProviders { get; } = new Dictionary<string, IDbEngineProvider>();
 

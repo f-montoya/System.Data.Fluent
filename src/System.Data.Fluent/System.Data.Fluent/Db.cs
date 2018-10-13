@@ -11,20 +11,20 @@ namespace System.Data.Fluent
 {
     public static class Db
     {
+        static Providers providers;
+
         public static void Configure(Action<IConfigurationBuilder> configureAction)
         {
             Check.IsNull(configureAction, "ConfigureAction");
 
-            Providers = Providers ?? new Providers();
+            providers = providers ?? new Providers();
 
-            configureAction(new ConfigurationBuilder(Providers));
+            configureAction(new ConfigurationBuilder(providers));
         }
 
         public static IConnectionBuilder Use(string connectionStringName)
         {
             Check.IsNull(connectionStringName, "ConnectionStringName");
-
-            Providers = Providers ?? throw new Exception("Call Db.Confgure() before use it.");
 
             return Use(ConfigurationManager.ConnectionStrings[connectionStringName]);
         }
@@ -33,11 +33,22 @@ namespace System.Data.Fluent
         {
             Check.IsNull(connectionStringSettings, "ConnectionStringSettings");
 
-            Providers = Providers ?? throw new Exception("Call Db.Confgure() before use it.");
+            if (providers == null)
+            {
+                throw new Exception("Call Db.Configure() before use it.");
+            }
 
-            return new ConnectionBuilder(connectionStringSettings);
+            if(!providers.DbEngineProviders.ContainsKey(connectionStringSettings.ProviderName))
+            {
+                throw new Exception($"DbEngineProvider for '{connectionStringSettings.ProviderName}' not found.");
+            }
+
+            return new ConnectionBuilder(new Context
+            {
+                ConnectionStringSettings = connectionStringSettings,
+                DbEngineProvider = providers.DbEngineProviders[connectionStringSettings.ProviderName],
+                DbValueProvider = providers.DbValueProvider
+            });
         }
-
-        internal static Providers Providers { get; private set; }
     }
 }

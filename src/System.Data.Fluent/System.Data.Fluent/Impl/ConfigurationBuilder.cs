@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent.Impl
 {
-    internal class ConfigurationBuilder : IConfigurationBuilder
+    internal sealed class ConfigurationBuilder : IConfigurationBuilder
     {
         readonly Providers providers;
 
