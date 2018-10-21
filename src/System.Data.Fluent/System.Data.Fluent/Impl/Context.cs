@@ -9,11 +9,18 @@ namespace System.Data.Fluent.Impl
 {
     internal sealed class Context
     {
-        public ConnectionStringSettings ConnectionStringSettings { get; set; }
+        public Context(ConnectionStringSettings connectionStringSettings, IDbEngineProvider dbEngineProvider)
+        {
+            ConnectionStringSettings = connectionStringSettings;
+            dbEngineProvider = DbEngineProvider;
+            DbValueProvider = DbEngineProvider.ValueProvider ?? new DefaultDbValueProvider();
+        }
 
-        public IDbEngineProvider DbEngineProvider { get; set; }
+        public ConnectionStringSettings ConnectionStringSettings { get; }
 
-        public IDbValueProvider DbValueProvider { get; set; }
+        public IDbEngineProvider DbEngineProvider { get; }
+
+        public IDbValueProvider DbValueProvider { get; }
 
         public string Command { get; set; }
 

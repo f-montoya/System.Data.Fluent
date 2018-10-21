@@ -9,7 +9,5 @@ namespace System.Data.Fluent.Abstraction
     public interface IConfigurationBuilder
     {
         IConfigurationBuilder AddProvider(IDbEngineProvider dataAccessProvider);
-
-        IConfigurationBuilder AddProvider(IDbValueProvider valueProvider);
     }
 }

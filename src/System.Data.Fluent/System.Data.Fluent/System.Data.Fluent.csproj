@@ -47,13 +47,16 @@
     <Compile Include="Abstraction\IParameterBuilder.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Abstraction\IConnectionBuilder.cs" />
+    <Compile Include="DbValueProvider.cs" />
     <Compile Include="Extensions\Check.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="IDbEngineProvider.cs" />
     <Compile Include="Impl\CommandBuilder.cs" />
     <Compile Include="Impl\ConfigurationBuilder.cs" />
     <Compile Include="Impl\ConnectionBuilder.cs" />
     <Compile Include="Impl\Context.cs" />
     <Compile Include="Impl\DefaultDbValueProvider.cs" />
+    <Compile Include="Impl\ParameterBuilder.cs" />
     <Compile Include="Impl\Providers.cs" />
     <Compile Include="IDbValueProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

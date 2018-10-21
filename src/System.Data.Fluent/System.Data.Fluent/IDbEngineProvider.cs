@@ -14,10 +14,14 @@ namespace System.Data.Fluent
 
         IDbCommand CreateCommand(IDbConnection connection);
 
+        IDataParameterCollection CreateParameterCollection();
+
         IDataParameter CreateInputParameter(string name, object value);
         IDataParameter CreateInputOutputParameter(string name, object value);
         IDataParameter CreateOutputParameter(string name, Type type);
         IDataParameter CreateReturnParameter(string name, Type type);
         IDataParameter CreateCursorParameter(string name);
+
+        IDbValueProvider ValueProvider { get; }
     }
 }

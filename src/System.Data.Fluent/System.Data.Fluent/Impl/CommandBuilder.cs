@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Fluent.Abstraction;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,169 +13,258 @@ namespace System.Data.Fluent.Impl
 {
     internal sealed class CommandBuilder : ICommandBuilder, IFunctionBuilder
     {
-        Context context;
+        readonly Context context;
+        readonly IList<Action<IParameterBuilder>> parametersActionList = new List<Action<IParameterBuilder>>();
 
         public CommandBuilder(Context context)
         {
             this.context = context;
         }
 
-        #region ICommandBuilder
 
-        public void Execute()
+        #region ICommandBuilder, IFunctionBuilder
+
+        void ICommandBuilder.Execute()
         {
-            throw new NotImplementedException();
+            ExecuteInternal(context, command => command.ExecuteNonQuery());
         }
 
-        public void Execute(Action<IDataParameterCollection> inspectParameters)
+        void ICommandBuilder.Execute(Action<IDataParameterCollection> inspectParameters)
         {
-            throw new NotImplementedException();
+            ExecuteInternal(context, command =>
+            {
+                command.ExecuteNonQuery();
+                inspectParameters.Invoke(command.Parameters);
+            });
         }
 
-        public T Execute<T>()
+        T IFunctionBuilder.Execute<T>()
         {
-            throw new NotImplementedException();
+            T retval = default(T);
+
+            ExecuteInternal(context, command =>
+            {
+                command.Parameters.Add(context.DbEngineProvider.CreateReturnParameter("retval", typeof(T)));
+                command.ExecuteNonQuery();
+                retval = context.DbValueProvider.ConvertDbValue<T>(command.Parameters["retvat"]);
+            });
+
+            return retval;
         }
 
-        public Task ExecuteAsync()
+        T ICommandBuilder.GetFirst<T>()
         {
-            throw new NotImplementedException();
+            var value = default(T);
+
+            GetListInternal<T>(t => { value = t; return false; });
+
+            return value;
         }
 
-        public Task ExecuteAsync(Action<IDataParameterCollection> inspectParameters)
+        IList<T> ICommandBuilder.GetList<T>()
         {
-            throw new NotImplementedException();
+            return ((ICommandBuilder)this).GetList<T>(CancellationToken.None);
         }
 
-        public Task ExecuteAsync(CancellationToken cancellationToken)
+        IList<T> ICommandBuilder.GetList<T>(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var list = new List<T>();
+
+            ((ICommandBuilder)this).GetList<T>(t =>
+            {
+                list.Add(t);
+                return !cancellationToken.IsCancellationRequested;
+            });
+
+            if(cancellationToken.IsCancellationRequested)
+            {
+                list.Clear();
+            }
+
+            return list;
         }
 
-        public Task ExecuteAsync(CancellationToken cancellationToken, Action<IDataParameterCollection> inspectParameters)
+        void ICommandBuilder.GetList<T>(Func<T, bool> action)
         {
-            throw new NotImplementedException();
+            GetListInternal(action);
         }
 
-
-        public T GetFirst<T>()
+        void ICommandBuilder.GetDataRecordList(Func<IDataRecord, bool> action)
         {
-            throw new NotImplementedException();
+            GetListInternal(action);
         }
 
-        public Task<T> GetFirstAsync<T>()
+        void ICommandBuilder.GetDataRecordFirst(Action<IDataRecord> action)
         {
-            throw new NotImplementedException();
+            GetListInternal<IDataRecord>(t => { action.Invoke(t); return false; });
         }
 
-        public Task<T> GetFirstAsync<T>(CancellationTokenSource cancellationTokenSource)
+        T ICommandBuilder.GetScalar<T>()
         {
-            throw new NotImplementedException();
+            T value = default(T);
+
+            GetListInternal<IDataRecord>(rec =>
+            {
+                value = context.DbValueProvider.ConvertDbValue<T>(rec.GetValue(0));
+                return false;
+            });
+
+            return value;
         }
 
-        public IList<T> GetList<T>()
+        IList<T> ICommandBuilder.GetScalarList<T>()
         {
-            throw new NotImplementedException();
+            return ((ICommandBuilder)this).GetScalarList<T>(CancellationToken.None);
         }
 
-        public void GetList<T>(Action<T> action)
+        IList<T> ICommandBuilder.GetScalarList<T>(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var list = new List<T>();
+
+            ((ICommandBuilder)this).GetScalarList<T>(value =>
+            {
+                list.Add(value);
+                return !cancellationToken.IsCancellationRequested;
+            });
+
+            if(cancellationToken.IsCancellationRequested)
+            {
+                list.Clear();
+            }
+
+            return list;
         }
 
-        public void GetList<T>(IObservable<T> observable)
+        void ICommandBuilder.GetScalarList<T>(Func<T, bool> action)
         {
-            throw new NotImplementedException();
+            GetListInternal<IDataRecord>(rec =>
+            {
+                var value = rec.GetValue(0);
+                var valueConverted = context.DbValueProvider.ConvertDbValue<T>(value);
+                return action.Invoke(valueConverted);
+            });
         }
 
-        public void GetList(Action<IDataRecord> action)
+        ICommandBuilder ICommandBuilder.Parameters(Action<IParameterBuilder> parametersAction)
         {
-            throw new NotImplementedException();
-        }
-
-        public void GetList(IObserver<IDataRecord> observable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<T>> GetListAsync<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync<T>(Action<T> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync<T>(IObservable<T> observable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync(Action<IDataRecord> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync(IObserver<IDataRecord> observable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<T>> GetListAsync<T>(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync<T>(CancellationToken cancellationToken, Action<T> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync<T>(CancellationToken cancellationToken, IObserver<T> observable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync(CancellationToken cancellationToken, Action<IDataRecord> action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GetListAsync(CancellationToken cancellationToken, IObserver<IDataRecord> observable)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IParameterBuilder Parameters(Action<IParameterBuilder> parametersAction)
-        {
-            throw new NotImplementedException();
+            parametersActionList.Add(parametersAction);
+            return this;
         }
 
         IFunctionBuilder IFunctionBuilder.Parameters(Action<IParameterBuilder> parametersAction)
         {
-            throw new NotImplementedException();
+            parametersActionList.Add(parametersAction);
+            return this;
         }
 
         #endregion
 
-        #region IFunctionBuilder
+        #region Private members
 
-        public Task<T> ExecuteAsync<T>()
+
+        void ExecuteInternal(Context context, Action<IDbCommand> action)
         {
-            throw new NotImplementedException();
+            var engine = context.DbEngineProvider;
+
+            using (var connection = engine.CreateConnection(context.ConnectionStringSettings.ConnectionString))
+            using (var command = engine.CreateCommand(connection))
+            {
+                connection.Open();
+
+                command.CommandText = context.Command;
+                command.CommandType = context.CommandType;
+                command.Parameters.AddRange(GetParameters());
+
+                action.Invoke(command);
+            }
         }
 
-        public Task<T> ExecuteAsync<T>(CancellationToken cancellationToken)
+        IEnumerable GetParameters()
         {
-            throw new NotImplementedException();
+            foreach (var parameterAction in parametersActionList)
+            {
+                var parameterBuilder = new ParameterBuilder(context);
+
+                parameterAction.Invoke(parameterBuilder);
+
+                foreach (var parameter in parameterBuilder.Parameters)
+                {
+                    yield return parameter;
+                }
+            }
         }
 
-        #endregion
+        void ExecuteQueryInternal(Context context, Action<IDataReader> action)
+        {
+            ExecuteInternal(context, command =>
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    action.Invoke(reader);
+                }
+            });
+        }
 
-        #region Internal
+        void GetListInternal<T>(Func<T, bool> action)
+        {
+            ExecuteQueryInternal(context, reader =>
+            {
+                var dataMappingList = CreateDataMappingList<T>(reader);
+                var moreRecords = true;
 
+                while (moreRecords && reader.Read())
+                {
+                    moreRecords = action.Invoke(BuildEntity<T>(reader, dataMappingList));
+                }
+            });
+        }
+
+        T BuildEntity<T>(IDataRecord record, IEnumerable<DataMapping> mappingList)
+        {
+            if (typeof(T) == typeof(IDataRecord))
+            {
+                return (T)record;
+            }
+
+            var instance = Activator.CreateInstance<T>();
+
+            foreach (var mapping in mappingList)
+            {
+                var recordValue = record.GetValue(mapping.Index);
+                var propertyValue = context.DbValueProvider.ConvertDbValue(recordValue, mapping.Property.PropertyType);
+
+                mapping.Property.SetValue(instance, propertyValue);
+            }
+
+            return instance;
+        }
+
+        IEnumerable<DataMapping> CreateDataMappingList<T>(IDataReader reader)
+        {
+            var typeofT = typeof(T);
+
+            if (typeofT == typeof(IDataReader))
+            {
+                yield break;
+            }
+
+            for (var index = 0; index < reader.FieldCount; index++)
+            {
+                var fieldName = reader.GetName(index);
+                var property = typeofT.GetProperty(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                if (property != null)
+                {
+                    yield return new DataMapping { Index = index, Property = property };
+                }
+            }
+        }
+
+        class DataMapping
+        {
+            public int Index { get; set; }
+
+            public PropertyInfo Property { get; set; }
+        }
 
         #endregion
     }

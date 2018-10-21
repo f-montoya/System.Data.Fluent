@@ -43,12 +43,10 @@ namespace System.Data.Fluent
                 throw new Exception($"DbEngineProvider for '{connectionStringSettings.ProviderName}' not found.");
             }
 
-            return new ConnectionBuilder(new Context
-            {
-                ConnectionStringSettings = connectionStringSettings,
-                DbEngineProvider = providers.DbEngineProviders[connectionStringSettings.ProviderName],
-                DbValueProvider = providers.DbValueProvider
-            });
+            var engineProvider = providers.DbEngineProviders[connectionStringSettings.ProviderName];
+            var context = new Context(connectionStringSettings, engineProvider);
+
+            return new ConnectionBuilder(context);
         }
     }
 }

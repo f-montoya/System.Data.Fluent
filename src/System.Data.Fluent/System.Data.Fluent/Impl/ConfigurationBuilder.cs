@@ -16,16 +16,11 @@ namespace System.Data.Fluent.Impl
             this.providers = providers;
         }
 
-        public IConfigurationBuilder AddProvider(IDbEngineProvider dataAccessProvider)
+        IConfigurationBuilder IConfigurationBuilder.AddProvider(IDbEngineProvider dataAccessProvider)
         {
             providers.DbEngineProviders.Add(dataAccessProvider.Name, dataAccessProvider);
             return this;
         }
 
-        public IConfigurationBuilder AddProvider(IDbValueProvider valueProvider)
-        {
-            providers.DbValueProvider = valueProvider;
-            return this;
-        }
     }
 }

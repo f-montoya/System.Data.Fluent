@@ -10,37 +10,22 @@ namespace System.Data.Fluent.Abstraction
 {
     public interface ICommandBuilder
     {
-        IParameterBuilder Parameters(Action<IParameterBuilder> parametersAction);
+        ICommandBuilder Parameters(Action<IParameterBuilder> parametersAction);
 
         void Execute();
         void Execute(Action<IDataParameterCollection> inspectParameters);
 
-        Task ExecuteAsync();
-        Task ExecuteAsync(Action<IDataParameterCollection> inspectParameters);
+        T GetScalar<T>();
+        IList<T> GetScalarList<T>();
+        IList<T> GetScalarList<T>(CancellationToken cancellationToken);
+        void GetScalarList<T>(Func<T, bool> action);
 
-        Task ExecuteAsync(CancellationToken cancellationToken);
-        Task ExecuteAsync(CancellationToken cancellationToken, Action<IDataParameterCollection> inspectParameters);
+        T GetFirst<T>() where T : class;
+        IList<T> GetList<T>() where T : class;
+        IList<T> GetList<T>(CancellationToken cancellationToken) where T : class;
+        void GetList<T>(Func<T, bool> action) where T : class;
 
-        IList<T> GetList<T>();
-        void GetList<T>(Action<T> action);
-        void GetList<T>(IObservable<T> observable);
-        void GetList(Action<IDataRecord> action);
-        void GetList(IObserver<IDataRecord> observable);
-
-        Task<IList<T>> GetListAsync<T>();
-        Task GetListAsync<T>(Action<T> action);
-        Task GetListAsync<T>(IObservable<T> observable);
-        Task GetListAsync(Action<IDataRecord> action);
-        Task GetListAsync(IObserver<IDataRecord> observable);
-
-        Task<IList<T>> GetListAsync<T>(CancellationToken cancellationToken);
-        Task GetListAsync<T>(CancellationToken cancellationToken, Action<T> action);
-        Task GetListAsync<T>(CancellationToken cancellationToken, IObserver<T> observable);
-        Task GetListAsync(CancellationToken cancellationToken, Action<IDataRecord> action);
-        Task GetListAsync(CancellationToken cancellationToken, IObserver<IDataRecord> observable);
-
-        T GetFirst<T>();
-        Task<T> GetFirstAsync<T>();
-        Task<T> GetFirstAsync<T>(CancellationTokenSource cancellationTokenSource);
+        void GetDataRecordList(Func<IDataRecord, bool> action);
+        void GetDataRecordFirst(Action<IDataRecord> action);
     }
 }

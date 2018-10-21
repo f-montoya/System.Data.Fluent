@@ -9,7 +9,5 @@ namespace System.Data.Fluent.Impl
     internal sealed class Providers
     {
         public IDictionary<string, IDbEngineProvider> DbEngineProviders { get; } = new Dictionary<string, IDbEngineProvider>();
-
-        public IDbValueProvider DbValueProvider { get; set; } = new DefaultDbValueProvider();
     }
 }

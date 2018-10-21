@@ -12,9 +12,5 @@ namespace System.Data.Fluent.Abstraction
         IFunctionBuilder Parameters(Action<IParameterBuilder> parametersAction);
 
         T Execute<T>();
-
-        Task<T> ExecuteAsync<T>();
-
-        Task<T> ExecuteAsync<T>(CancellationToken cancellationToken);
     }
 }
