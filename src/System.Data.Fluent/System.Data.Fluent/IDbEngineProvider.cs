@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,18 +11,11 @@ namespace System.Data.Fluent
     {
         string Name { get; }
 
-        IDbConnection CreateConnection(string connectionString);
+        bool SupportsProcedures { get; }
+        bool SupportsFunctions { get; }
 
-        IDbCommand CreateCommand(IDbConnection connection);
+        DbProviderFactory ProviderFactory {get; }
 
-        IDataParameterCollection CreateParameterCollection();
-
-        IDataParameter CreateInputParameter(string name, object value);
-        IDataParameter CreateInputOutputParameter(string name, object value);
-        IDataParameter CreateOutputParameter(string name, Type type);
-        IDataParameter CreateReturnParameter(string name, Type type);
-        IDataParameter CreateCursorParameter(string name);
-
-        IDbValueProvider ValueProvider { get; }
+        IDbValueConverter ValueProvider { get; }
     }
 }

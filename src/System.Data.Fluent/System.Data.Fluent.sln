@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Fluent", "System.Data.Fluent\System.Data.Fluent.csproj", "{301F3AAB-90E8-4A22-B1B7-C743DAF657C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Fluent.SQLite", "System.Data.Fluent.SQLite\System.Data.Fluent.SQLite.csproj", "{D75987BC-135C-4159-BBB3-51B82830FB21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{301F3AAB-90E8-4A22-B1B7-C743DAF657C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{301F3AAB-90E8-4A22-B1B7-C743DAF657C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{301F3AAB-90E8-4A22-B1B7-C743DAF657C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D75987BC-135C-4159-BBB3-51B82830FB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D75987BC-135C-4159-BBB3-51B82830FB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D75987BC-135C-4159-BBB3-51B82830FB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D75987BC-135C-4159-BBB3-51B82830FB21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

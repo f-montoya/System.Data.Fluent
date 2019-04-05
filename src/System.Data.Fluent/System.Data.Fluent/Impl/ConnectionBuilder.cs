@@ -21,6 +21,11 @@ namespace System.Data.Fluent.Impl
 
         IFunctionBuilder IConnectionBuilder.WithFunction(string function)
         {
+            if (!context.DbEngineProvider.SupportsFunctions)
+            {
+                throw new NotSupportedException();
+            }
+
             context.Command = function;
             context.CommandType = CommandType.StoredProcedure;
 
@@ -29,6 +34,11 @@ namespace System.Data.Fluent.Impl
 
         ICommandBuilder IConnectionBuilder.WithProcedure(string procedure)
         {
+            if(!context.DbEngineProvider.SupportsProcedures)
+            {
+                throw new NotSupportedException();
+            }
+
             context.Command = procedure;
             context.CommandType = CommandType.StoredProcedure;
 

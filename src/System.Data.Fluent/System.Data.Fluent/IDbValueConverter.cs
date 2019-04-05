@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent
 {
-    public interface IDbValueProvider
+    public interface IDbValueConverter
     {
         T ConvertDbValue<T>(object value);
 

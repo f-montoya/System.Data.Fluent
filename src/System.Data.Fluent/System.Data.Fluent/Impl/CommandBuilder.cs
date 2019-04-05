@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Data.Fluent.Abstraction;
 using System.Linq;
 using System.Reflection;
@@ -21,161 +22,178 @@ namespace System.Data.Fluent.Impl
             this.context = context;
         }
 
+        #region ICommandBuilder
 
-        #region ICommandBuilder, IFunctionBuilder
-
-        void ICommandBuilder.Execute()
+        public ICommandBuilder Parameters(Action<IParameterBuilder> parametersAction)
         {
-            ExecuteInternal(context, command => command.ExecuteNonQuery());
+            throw new NotImplementedException();
         }
 
-        void ICommandBuilder.Execute(Action<IDataParameterCollection> inspectParameters)
+        public Task ExecuteAsync()
         {
-            ExecuteInternal(context, command =>
+            return ExecuteAsync(CancellationToken.None);
+        }
+
+        public async Task ExecuteAsync(CancellationToken cancellationToken)
+        {
+            context.CancellationToken = cancellationToken;
+
+            await ExecuteInternalAsync(async cmd =>
             {
-                command.ExecuteNonQuery();
-                inspectParameters.Invoke(command.Parameters);
+                await cmd.ExecuteNonQueryAsync(cancellationToken);
             });
         }
 
-        T IFunctionBuilder.Execute<T>()
+        public Task ExecuteAsync(Action<DbParameterCollection> inspectParameters)
         {
-            T retval = default(T);
+            return ExecuteAsync(inspectParameters, CancellationToken.None);
+        }
 
-            ExecuteInternal(context, command =>
+        public async Task ExecuteAsync(Action<DbParameterCollection> inspectParameters, CancellationToken cancellationToken)
+        {
+            context.CancellationToken = cancellationToken;
+
+            await ExecuteInternalAsync(async cmd =>
             {
-                command.Parameters.Add(context.DbEngineProvider.CreateReturnParameter("retval", typeof(T)));
-                command.ExecuteNonQuery();
-                retval = context.DbValueProvider.ConvertDbValue<T>(command.Parameters["retvat"]);
+                await cmd.ExecuteNonQueryAsync(cancellationToken);
+                inspectParameters.Invoke(cmd.Parameters);
             });
-
-            return retval;
         }
 
-        T ICommandBuilder.GetFirst<T>()
+        public Task<T> GetScalarAsync<T>()
         {
-            var value = default(T);
-
-            GetListInternal<T>(t => { value = t; return false; });
-
-            return value;
+            return GetScalarAsync<T>(CancellationToken.None);
         }
 
-        IList<T> ICommandBuilder.GetList<T>()
+        public async Task<T> GetScalarAsync<T>(CancellationToken cancellationToken)
         {
-            return ((ICommandBuilder)this).GetList<T>(CancellationToken.None);
+            context.CancellationToken = cancellationToken;
+            object value = null;
+
+            await ExecuteInternalAsync(async cmd => value = await cmd.ExecuteScalarAsync(cancellationToken));
+
+            return context.DbEngineProvider.ValueProvider.ConvertDbValue<T>(value);
         }
 
-        IList<T> ICommandBuilder.GetList<T>(CancellationToken cancellationToken)
+        public Task<IList<T>> GetScalarListAsync<T>()
         {
+            return GetScalarListAsync<T>(CancellationToken.None);
+        }
+
+        public async Task<IList<T>> GetScalarListAsync<T>(CancellationToken cancellationToken)
+        {
+            context.CancellationToken = cancellationToken;
             var list = new List<T>();
 
-            ((ICommandBuilder)this).GetList<T>(t =>
-            {
-                list.Add(t);
-                return !cancellationToken.IsCancellationRequested;
-            });
-
-            if(cancellationToken.IsCancellationRequested)
-            {
-                list.Clear();
-            }
+            await GetScalarListAsync<T>(v => { list.Add(v); return true; }, cancellationToken);
 
             return list;
         }
 
-        void ICommandBuilder.GetList<T>(Func<T, bool> action)
+        public Task GetScalarListAsync<T>(Func<T, bool> action)
         {
-            GetListInternal(action);
+            return GetScalarListAsync<T>(action, CancellationToken.None);
         }
 
-        void ICommandBuilder.GetDataRecordList(Func<IDataRecord, bool> action)
+        public async Task GetScalarListAsync<T>(Func<T, bool> action, CancellationToken cancellationToken)
         {
-            GetListInternal(action);
-        }
+            context.CancellationToken = cancellationToken;
 
-        void ICommandBuilder.GetDataRecordFirst(Action<IDataRecord> action)
-        {
-            GetListInternal<IDataRecord>(t => { action.Invoke(t); return false; });
-        }
-
-        T ICommandBuilder.GetScalar<T>()
-        {
-            T value = default(T);
-
-            GetListInternal<IDataRecord>(rec =>
+            await ExecuteQueryInternalAsync(async reader =>
             {
-                value = context.DbValueProvider.ConvertDbValue<T>(rec.GetValue(0));
-                return false;
+                var moreRecords = true;
+
+                while (moreRecords && await reader.ReadAsync())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var value = reader.GetValue(0);
+                    var valueOfT = context.DbEngineProvider.ValueProvider.ConvertDbValue<T>(value);
+
+                    moreRecords = action(valueOfT);
+                }
             });
+
+        }
+
+        public Task<T> GetFirstAsync<T>() where T : class
+        {
+            return GetFirstAsync<T>(CancellationToken.None);
+        }
+
+        public async Task<T> GetFirstAsync<T>(CancellationToken cancellationToken) where T : class
+        {
+            context.CancellationToken = cancellationToken;
+            T value = null;
+
+            await GetListInternalAsync<T>( v => { value = v; return false; });
 
             return value;
         }
 
-        IList<T> ICommandBuilder.GetScalarList<T>()
+        public async Task GetFirstAsync(Action<IDataRecord> action)
         {
-            return ((ICommandBuilder)this).GetScalarList<T>(CancellationToken.None);
+            await ExecuteQueryInternalAsync(context)
         }
 
-        IList<T> ICommandBuilder.GetScalarList<T>(CancellationToken cancellationToken)
+        public Task GetFirstAsync(Action<IDataRecord> action, CancellationToken cancellationToken)
         {
-            var list = new List<T>();
-
-            ((ICommandBuilder)this).GetScalarList<T>(value =>
-            {
-                list.Add(value);
-                return !cancellationToken.IsCancellationRequested;
-            });
-
-            if(cancellationToken.IsCancellationRequested)
-            {
-                list.Clear();
-            }
-
-            return list;
+            throw new NotImplementedException();
         }
 
-        void ICommandBuilder.GetScalarList<T>(Func<T, bool> action)
+        public Task<IList<T>> GetListAsync<T>() where T : class
         {
-            GetListInternal<IDataRecord>(rec =>
-            {
-                var value = rec.GetValue(0);
-                var valueConverted = context.DbValueProvider.ConvertDbValue<T>(value);
-                return action.Invoke(valueConverted);
-            });
+            throw new NotImplementedException();
         }
 
-        ICommandBuilder ICommandBuilder.Parameters(Action<IParameterBuilder> parametersAction)
+        public Task<IList<T>> GetListAsync<T>(CancellationToken cancellationToken) where T : class
         {
-            parametersActionList.Add(parametersAction);
-            return this;
+            throw new NotImplementedException();
         }
 
-        IFunctionBuilder IFunctionBuilder.Parameters(Action<IParameterBuilder> parametersAction)
+        public Task GetListAsync<T>(Func<T, bool> action) where T : class
         {
-            parametersActionList.Add(parametersAction);
-            return this;
+            throw new NotImplementedException();
         }
+
+        public Task GetListAsync<T>(Func<T, bool> action, CancellationToken cancellationToken) where T : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task GetListAsync(Func<IDataRecord, bool> action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task GetListAsync(Func<IDataRecord, bool> action, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         #endregion
 
+
         #region Private members
 
-
-        void ExecuteInternal(Context context, Action<IDbCommand> action)
+        async Task ExecuteInternalAsync(Func<DbCommand, Task> actionAsync)
         {
-            var engine = context.DbEngineProvider;
+            var engine = context.DbEngineProvider.ProviderFactory;
 
-            using (var connection = engine.CreateConnection(context.ConnectionStringSettings.ConnectionString))
-            using (var command = engine.CreateCommand(connection))
+            using (var connection = engine.CreateConnection())
+            using (var command = engine.CreateCommand())
             {
-                connection.Open();
-
+                connection.ConnectionString = context.ConnectionString;
                 command.CommandText = context.Command;
                 command.CommandType = context.CommandType;
                 command.Parameters.AddRange(GetParameters());
 
-                action.Invoke(command);
+                context.CancellationToken.ThrowIfCancellationRequested();
+
+                await connection.OpenAsync(context.CancellationToken);
+                await actionAsync.Invoke(command);
             }
         }
 
@@ -194,26 +212,27 @@ namespace System.Data.Fluent.Impl
             }
         }
 
-        void ExecuteQueryInternal(Context context, Action<IDataReader> action)
+        async Task ExecuteQueryInternalAsync(Func<DbDataReader, Task> actionAsync)
         {
-            ExecuteInternal(context, command =>
+            await ExecuteInternalAsync(async command =>
             {
-                using (var reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync(context.CancellationToken))
                 {
-                    action.Invoke(reader);
+                    await actionAsync.Invoke(reader);
                 }
             });
         }
 
-        void GetListInternal<T>(Func<T, bool> action)
+        async Task GetListInternalAsync<T>(Func<T, bool> action)
         {
-            ExecuteQueryInternal(context, reader =>
+            await ExecuteQueryInternalAsync(async reader =>
             {
                 var dataMappingList = CreateDataMappingList<T>(reader);
                 var moreRecords = true;
 
-                while (moreRecords && reader.Read())
+                while (moreRecords && await reader.ReadAsync())
                 {
+                    context.CancellationToken.ThrowIfCancellationRequested();
                     moreRecords = action.Invoke(BuildEntity<T>(reader, dataMappingList));
                 }
             });
@@ -231,7 +250,7 @@ namespace System.Data.Fluent.Impl
             foreach (var mapping in mappingList)
             {
                 var recordValue = record.GetValue(mapping.Index);
-                var propertyValue = context.DbValueProvider.ConvertDbValue(recordValue, mapping.Property.PropertyType);
+                var propertyValue = context.DbEngineProvider.ValueProvider.ConvertDbValue(recordValue, mapping.Property.PropertyType);
 
                 mapping.Property.SetValue(instance, propertyValue);
             }
@@ -258,6 +277,7 @@ namespace System.Data.Fluent.Impl
                 }
             }
         }
+
 
         class DataMapping
         {

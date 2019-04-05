@@ -1,65 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{301F3AAB-90E8-4A22-B1B7-C743DAF657C6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Data.Fluent</RootNamespace>
-    <AssemblyName>System.Data.Fluent</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>net452;netcoreapp2.0;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System.Configuration" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Abstraction\ICommandBuilder.cs" />
-    <Compile Include="Abstraction\IConfigurationBuilder.cs" />
-    <Compile Include="Abstraction\IFunctionBuilder.cs" />
-    <Compile Include="Abstraction\IParameterBuilder.cs" />
-    <Compile Include="Db.cs" />
-    <Compile Include="Abstraction\IConnectionBuilder.cs" />
-    <Compile Include="DbValueProvider.cs" />
-    <Compile Include="Extensions\Check.cs" />
-    <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="IDbEngineProvider.cs" />
-    <Compile Include="Impl\CommandBuilder.cs" />
-    <Compile Include="Impl\ConfigurationBuilder.cs" />
-    <Compile Include="Impl\ConnectionBuilder.cs" />
-    <Compile Include="Impl\Context.cs" />
-    <Compile Include="Impl\DefaultDbValueProvider.cs" />
-    <Compile Include="Impl\ParameterBuilder.cs" />
-    <Compile Include="Impl\Providers.cs" />
-    <Compile Include="IDbValueProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
+
+

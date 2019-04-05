@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent
 {
-    public abstract class DbValueProvider : IDbValueProvider
+    public abstract class DbValueProvider : IDbValueConverter
     {
-        IDbValueProvider defaultDbValueProvider;
+        IDbValueConverter defaultDbValueProvider { get; } = new DefaultDbValueProvider();
 
         public T ConvertDbValue<T>(object value)
         {
@@ -18,8 +18,6 @@ namespace System.Data.Fluent
 
         public virtual object ConvertDbValue(object value, Type type)
         {
-            defaultDbValueProvider = defaultDbValueProvider ?? new DefaultDbValueProvider();
-
             return defaultDbValueProvider.ConvertDbValue(value, type);
         }
     }
