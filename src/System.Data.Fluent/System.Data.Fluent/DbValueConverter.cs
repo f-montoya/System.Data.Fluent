@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent
 {
-    public abstract class DbValueProvider : IDbValueConverter
+    public abstract class DbValueConverter : IDbValueConverter
     {
         IDbValueConverter defaultDbValueProvider { get; } = new DefaultDbValueProvider();
 

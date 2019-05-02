@@ -12,34 +12,19 @@ namespace System.Data.Fluent.Abstraction
     {
         ICommandBuilder Parameters(Action<IParameterBuilder> parametersAction);
 
-        Task ExecuteAsync();
-        Task ExecuteAsync(CancellationToken cancellationToken);
+        int Execute();
+        int Execute(Action<IDataParameterCollection> inspectParameters);
 
-        Task ExecuteAsync(Action<DbParameterCollection> inspectParameters);
-        Task ExecuteAsync(Action<DbParameterCollection> inspectParameters, CancellationToken cancellationToken);
+        T GetScalar<T>();
 
-        Task<T> GetScalarAsync<T>();
-        Task<T> GetScalarAsync<T>(CancellationToken cancellationToken);
+        IList<T> GetScalarList<T>();
+        void GetScalarList<T>(Func<T, bool> callback);
 
-        Task<IList<T>> GetScalarListAsync<T>();
-        Task<IList<T>> GetScalarListAsync<T>(CancellationToken cancellationToken);
+        T GetFirst<T>() where T : class;
+        void GetFirst(Action<IDataRecord> callback);
 
-        Task GetScalarListAsync<T>(Func<T, bool> action);
-        Task GetScalarListAsync<T>(Func<T, bool> action, CancellationToken cancellationToken);
-
-        Task<T> GetFirstAsync<T>() where T : class;
-        Task<T> GetFirstAsync<T>(CancellationToken cancellationToken) where T : class;
-
-        Task GetFirstAsync(Action<IDataRecord> action);
-        Task GetFirstAsync(Action<IDataRecord> action, CancellationToken cancellationToken);
-
-        Task<IList<T>> GetListAsync<T>() where T : class;
-        Task<IList<T>> GetListAsync<T>(CancellationToken cancellationToken) where T : class;
-
-        Task GetListAsync<T>(Func<T, bool> action) where T : class;
-        Task GetListAsync<T>(Func<T, bool> action, CancellationToken cancellationToken) where T : class;
-
-        Task GetListAsync(Func<IDataRecord, bool> action);
-        Task GetListAsync(Func<IDataRecord, bool> action, CancellationToken cancellationToken);
+        IList<T> GetList<T>() where T : class;
+        void GetList<T>(Func<T, bool> callback) where T : class;
+        void GetList(Func<IDataRecord, bool> callback);
     }
 }

@@ -10,31 +10,30 @@ namespace System.Data.Fluent.Impl
 {
     internal class ParameterBuilder : IParameterBuilder
     {
-        readonly IDbEngineProvider engine;
+        readonly IDbParameterFactory factory;
 
-        public ParameterBuilder(Context context)
+        public ParameterBuilder(IDbParameterFactory factory)
         {
-            engine = context.DbEngineProvider;
-            Parameters = engine.CreateParameterCollection();
+            this.factory = factory;
         }
 
-        public IDataParameterCollection Parameters { get; }
+        public IList<DbParameter> Parameters { get; } = new List<DbParameter>();
 
         public IParameterBuilder Add(string name, object value)
         {
-            Parameters.Add(engine.CreateInputParameter(name, value));
+            Parameters.Add(factory.CreateInputParameter(name, value));
             return this;
         }
 
         public IParameterBuilder AddCursor(string name)
         {
-            Parameters.Add(engine.CreateCursorParameter(name));
+            Parameters.Add(factory.CreateCursorParameter(name));
             return this;
         }
 
         public IParameterBuilder AddInOut(string name, object value)
         {
-            Parameters.Add(engine.CreateInputOutputParameter(name, value));
+            Parameters.Add(factory.CreateInputOutputParameter(name, value));
             return this;
         }
 
@@ -45,7 +44,7 @@ namespace System.Data.Fluent.Impl
 
         public IParameterBuilder AddOut(string name, Type type)
         {
-            Parameters.Add(engine.CreateOutputParameter(name, type));
+            Parameters.Add(factory.CreateOutputParameter(name, type));
             return this;
         }
     }
