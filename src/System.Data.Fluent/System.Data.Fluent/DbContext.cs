@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data.Fluent.Impl;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace System.Data.Fluent
 {
     public abstract class DbContext : IDisposable
     {
         readonly string connectionString;
-        readonly IDbValueConverter defaultDbValueConverter = new DefaultDbValueProvider();
+
         DbConnection connection;
 
         protected DbContext(string connectionString)
         {
+            Check.IsNull(connectionString, nameof(connectionString));
+
             this.connectionString = connectionString;
         }
 
@@ -27,9 +24,9 @@ namespace System.Data.Fluent
 
         public abstract DbProviderFactory DbProviderFactory { get; }
 
-        public abstract IDbParameterFactory DbParameterFactory { get; }
+        public abstract DbParameterFactory DbParameterFactory { get; }
 
-        public virtual IDbValueConverter DbValueConverter => defaultDbValueConverter;
+        public abstract DbValueConverter DbValueConverter { get; }
 
         #region IDisposable 
 

@@ -1,8 +1,5 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Fluent.Abstraction;
+using System.Globalization;
 
 namespace System.Data.Fluent.Impl
 {
@@ -10,7 +7,9 @@ namespace System.Data.Fluent.Impl
     {
         public object ConvertDbValue(object value, Type type)
         {
-            if(value == null || Convert.IsDBNull(value))
+            Check.IsNull(type, nameof(type));
+
+            if (value == null || Convert.IsDBNull(value))
             {
                 return null;
             }
@@ -34,7 +33,7 @@ namespace System.Data.Fluent.Impl
 
             if(value is IConvertible)
             {
-                return Convert.ChangeType(value, type);
+                return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
             }
 
             throw new InvalidCastException($"Can not convert {valueType.Name} to {type.Name}");

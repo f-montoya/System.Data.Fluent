@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Fluent.Abstraction;
 using System.Data.Fluent.Impl;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace System.Data.Fluent
 
         public virtual object ConvertDbValue(object value, Type type)
         {
+            Check.IsNull(type, nameof(type));
+
             return defaultDbValueProvider.ConvertDbValue(value, type);
         }
     }

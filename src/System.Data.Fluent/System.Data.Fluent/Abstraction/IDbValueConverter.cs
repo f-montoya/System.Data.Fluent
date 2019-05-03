@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.Data.Fluent
+namespace System.Data.Fluent.Abstraction
 {
     public interface IDbValueConverter
     {

@@ -8,26 +8,12 @@ using System.Threading.Tasks;
 
 namespace System.Data.Fluent.SQLite
 {
-    internal class SQLiteDbParameterFactory : IDbParameterFactory
+    internal class SQLiteDbParameterFactory : DbParameterFactory
     {
-        public DbParameter CreateInputParameter(string name, object value)
-        {
-            return new SQLiteParameter(name, value);
-        }
+        protected override DbParameter CreateParameter() => new SQLiteParameter();
 
-        public DbParameter CreateCursorParameter(string name)
-        {
-            throw new NotSupportedException();
-        }
+        public override DbParameter CreateInputOutputParameter(string name, object value) => throw new NotSupportedException();
 
-        public DbParameter CreateInputOutputParameter(string name, object value)
-        {
-            throw new NotSupportedException();
-        }
-
-        public DbParameter CreateOutputParameter(string name, Type type)
-        {
-            throw new NotSupportedException();
-        }
+        public override DbParameter CreateOutputParameter(string name, Type type) => throw new NotSupportedException();
     }
 }

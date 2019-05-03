@@ -20,6 +20,8 @@ namespace System.Data.Fluent.SQLite
 
         public override DbProviderFactory DbProviderFactory { get; } = new SQLiteFactory();
 
-        public override IDbParameterFactory DbParameterFactory { get; } = new SQLiteDbParameterFactory();
+        public override DbParameterFactory DbParameterFactory { get; } = new SQLiteDbParameterFactory();
+
+        public override DbValueConverter DbValueConverter { get; } = new SQLiteDbValueConverter();
     }
 }

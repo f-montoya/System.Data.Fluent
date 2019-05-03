@@ -10,6 +10,7 @@ namespace System.Data.Fluent.Abstraction
 {
     public interface ICommandBuilder
     {
+        ICommandBuilder CommandTimeout(int timeout);
         ICommandBuilder Parameters(Action<IParameterBuilder> parametersAction);
 
         int Execute();

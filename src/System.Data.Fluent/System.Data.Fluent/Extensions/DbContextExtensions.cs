@@ -13,7 +13,7 @@ namespace System.Data
     {
         public static ICommandBuilder WithSql(this DbContext dbContext, string sql)
         {
-            return new CommandBuilder(dbContext, sql, CommandType.Text);
+            return new CommandBuilder(new Command(dbContext, sql, CommandType.Text));
         }
 
         public static ICommandBuilder WithProcedure(this DbContext dbContext, string procedure)
@@ -23,7 +23,7 @@ namespace System.Data
                 throw new NotSupportedException();
             }
 
-            return new CommandBuilder(dbContext, procedure, CommandType.StoredProcedure);
+            return new CommandBuilder(new Command(dbContext, procedure, CommandType.StoredProcedure));
         }
 
         public static IFunctionBuilder WithFunction(this DbContext dbContext, string function)
@@ -33,7 +33,7 @@ namespace System.Data
                 throw new NotSupportedException();
             }
 
-            return new CommandBuilder(dbContext, function, CommandType.StoredProcedure);
+            return new FunctionBuilder(new Command(dbContext, function, CommandType.StoredProcedure));
         }
     }
 }
