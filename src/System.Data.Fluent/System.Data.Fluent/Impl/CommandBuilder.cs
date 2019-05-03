@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Fluent.Abstraction;
-using System.Reflection;
 
 namespace System.Data.Fluent.Impl
 {

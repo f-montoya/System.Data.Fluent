@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>net452;netcoreapp2.0;netstandard2.0</TargetFrameworks>
+    <Copyright>Copyright © Francesc Montoya 2019</Copyright>
+    <Product>System.Data.Fluent</Product>
+    <Description>SQLite implementation of System.Data.Fluent</Description>
+    <Authors>Francesc Montoya</Authors>
+    <Company>Francesc Montoya</Company>
+    <RepositoryUrl>https://github.com/f-montoya/System.Data.Fluent</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageTags>Data Fluent</PackageTags>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">

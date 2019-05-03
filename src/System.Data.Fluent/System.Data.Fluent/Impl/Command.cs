@@ -114,7 +114,6 @@ namespace System.Data.Fluent.Impl
             });
         }
 
-
         T BuildEntity<T>(IDataRecord record, IEnumerable<DataMapping> mappingList)
         {
             if (typeof(T) == typeof(IDataRecord))
