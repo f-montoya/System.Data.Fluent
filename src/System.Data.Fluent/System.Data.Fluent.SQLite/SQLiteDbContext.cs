@@ -14,14 +14,14 @@ namespace System.Data.Fluent.SQLite
         {
         }
 
-        public override bool SupportsProcedures => false;
+        protected override bool SupportsProcedures => false;
 
-        public override bool SupportsFunctions => false;
+        protected override bool SupportsFunctions => false;
 
-        public override DbProviderFactory DbProviderFactory { get; } = new SQLiteFactory();
+        protected override DbProviderFactory DbProviderFactory { get; } = new SQLiteFactory();
 
-        public override DbParameterFactory DbParameterFactory { get; } = new SQLiteDbParameterFactory();
+        protected override DbParameterFactory DbParameterFactory { get; } = new SQLiteDbParameterFactory();
 
-        public override DbValueConverter DbValueConverter { get; } = new SQLiteDbValueConverter();
+        protected override DbValueConverter DbValueConverter { get; } = new SQLiteDbValueConverter();
     }
 }
