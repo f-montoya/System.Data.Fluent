@@ -1,13 +1,40 @@
 ﻿using System.Data.Common;
+using System.Data.Fluent.Abstraction;
 using System.Data.Fluent.Impl;
 
 namespace System.Data.Fluent
 {
-    public abstract class DbContext : IDisposable
+    public abstract class DbContext : IDbContextBuilder, IDbContext, IDisposable
     {
         readonly string connectionString;
-
         DbConnection connection;
+
+        public ICommandBuilder WithSql(string sql)
+        {
+            return new CommandBuilder(new Command(this, sql, CommandType.Text));
+        }
+
+        public ICommandBuilder WithProcedure(string procedure)
+        {
+            if (!SupportsProcedures)
+            {
+                throw new NotSupportedException();
+            }
+
+            return new CommandBuilder(new Command(this, procedure, CommandType.StoredProcedure));
+        }
+
+        public IFunctionBuilder WithFunction(string function)
+        {
+            if (!SupportsFunctions)
+            {
+                throw new NotSupportedException();
+            }
+
+            return new FunctionBuilder(new Command(this, function, CommandType.StoredProcedure));
+        }
+
+        #region Protected members
 
         protected DbContext(string connectionString)
         {
@@ -16,17 +43,29 @@ namespace System.Data.Fluent
             this.connectionString = connectionString;
         }
 
-        public DbConnection Connection => connection ?? (connection = CreateConnection());
+        protected abstract bool SupportsProcedures { get; }
 
-        public abstract bool SupportsProcedures { get; }
+        protected abstract bool SupportsFunctions { get; }
 
-        public abstract bool SupportsFunctions { get; }
+        protected abstract DbProviderFactory DbProviderFactory { get; }
 
-        public abstract DbProviderFactory DbProviderFactory { get; }
+        protected abstract DbParameterFactory DbParameterFactory { get; }
 
-        public abstract DbParameterFactory DbParameterFactory { get; }
+        protected abstract DbValueConverter DbValueConverter { get; }
 
-        public abstract DbValueConverter DbValueConverter { get; }
+        #endregion
+
+        #region IDbContext
+
+        DbConnection IDbContext.Connection => connection ?? (connection = CreateConnection());
+
+        DbProviderFactory IDbContext.DbProviderFactory => DbProviderFactory;
+
+        DbParameterFactory IDbContext.DbParameterFactory => DbParameterFactory;
+
+        DbValueConverter IDbContext.DbValueConverter => DbValueConverter;
+
+        #endregion
 
         #region IDisposable 
 
@@ -48,12 +87,12 @@ namespace System.Data.Fluent
 
         #endregion
 
-        private DbConnection CreateConnection()
+        DbConnection CreateConnection()
         {
-            var provider = DbProviderFactory ?? throw new ArgumentNullException(nameof(DbProviderFactory));
-            var cnn = provider.CreateConnection();
+            var cnn = DbProviderFactory.CreateConnection();
             cnn.ConnectionString = connectionString;
             return cnn;
         }
+
     }
 }

@@ -7,18 +7,18 @@ namespace System.Data.Fluent.Impl
 {
     internal sealed class Command
     {
-        readonly DbContext context;
+        readonly IDbContext context;
         readonly string commandText;
         readonly CommandType commandType;
 
-        public Command(DbContext context, string commandText, CommandType commandType)
+        public Command(IDbContext context, string commandText, CommandType commandType)
         {
             this.context = context;
             this.commandText = commandText;
             this.commandType = commandType;
         }
 
-        public DbContext Context => context;
+        public IDbContext Context => context;
 
         public int CommandTimeout { get; set; }
 

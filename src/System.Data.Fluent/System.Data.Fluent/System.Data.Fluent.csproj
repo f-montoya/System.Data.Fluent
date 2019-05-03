@@ -6,13 +6,13 @@
     <Authors>Francesc Montoya</Authors>
     <Company>Francesc Montoya</Company>
     <Copyright>Copyright © Francesc Montoya 2019</Copyright>
-    <Description>Fluent interface to access data bases</Description>
+    <Description>Fluent interface to data access</Description>
     <RepositoryUrl>https://github.com/f-montoya/System.Data.Fluent</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageTags>Data Fluent</PackageTags>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
 
